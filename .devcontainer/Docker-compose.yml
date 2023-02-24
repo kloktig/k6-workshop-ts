@@ -10,6 +10,7 @@ services:
       - INFLUXDB_DB=k6
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+
   grafana:
     image: grafana/grafana:latest
 
@@ -25,11 +26,55 @@ services:
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    platform: linux/x86_64
+    ports:
+      - '14250:14250'
+      - '14268:14268'
+      - '14269:14269'
+      - '4318:4318'
+      - '4317:4317'
+      - '6831:6831/udp'
+      - '16686:16686'
+      - '16685:16685'
+      - '9411:9411'
+    volumes:
+      - './jaeger-ui.json:/etc/jaeger/jaeger-ui.json'
+    command: --query.ui-config /etc/jaeger/jaeger-ui.json
+    environment:
+#      - METRICS_STORAGE_TYPE=prometheus
+#      - PROMETHEUS_SERVER_URL=http://172.17.0.1:9090
+      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
+      - COLLECTOR_OTLP_ENABLED=true
+      - JAEGER_DISABLED=true
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+
   webapi:
     restart: always
     build:
       context: .
       dockerfile: Dockerfile
+    depends_on:
+      jaeger:
+        condition: service_started
+      influxdb:
+        condition: service_started
+      grafana:
+        condition: service_started
+      prometheus:
+        condition: service_started
     platform: linux/x86_64
     ports:
       - '1234:1234'
@@ -41,3 +86,6 @@ services:
       - ../node_modules:/workspace/node_modules
     extra_hosts:
       - 'host.docker.internal:host-gateway'
+
+volumes:
+  prometheus-data:

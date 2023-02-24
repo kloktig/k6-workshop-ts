@@ -6,7 +6,7 @@ RUN apt-get update
 RUN apt-get install k6
 
 ENV HOST=0.0.0.0
-ENV NODE_ENV=production
+ENV NODE_ENV=development
 ENV PORT=8080
 
 EXPOSE 8080

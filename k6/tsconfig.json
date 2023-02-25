@@ -30,5 +30,6 @@
   
       "skipLibCheck": true
     },
-    "include": ["src", "test"]
+    "include": ["test"],
+    "exclude": ["node_modules"]
   }

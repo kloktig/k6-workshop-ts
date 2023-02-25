@@ -7,12 +7,12 @@ const webpack = require('webpack');
 
 /** @type {import('webpack').Configuration} */
 module.exports = [
-    {   
+    {
         name: 'test',
         mode: 'production',
         entry: GlobEntries('./test/*.ts'), // Generates multiple entry for each test
         output: {
-            path: path.join(__dirname, 'dist','test'),
+            path: path.join(__dirname, 'dist'),
             libraryTarget: 'commonjs',
             filename: '[name].js',
             publicPath: '.',

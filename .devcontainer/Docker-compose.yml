@@ -50,6 +50,17 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
+  db:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    ports:
+      - "1433:1433"
+
+    environment:
+        SA_PASSWORD: "S3cur3P@ssW0rd!"
+        ACCEPT_EULA: "Y"
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+      
   webapi:
     restart: always
     build:
@@ -61,6 +72,8 @@ services:
       influxdb:
         condition: service_started
       grafana:
+        condition: service_started
+      db:
         condition: service_started
     platform: linux/x86_64
     ports:

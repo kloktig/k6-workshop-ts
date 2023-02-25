@@ -27,35 +27,24 @@ services:
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - '9090:9090'
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - prometheus-data:/prometheus
-    command: --web.enable-lifecycle --config.file=/etc/prometheus/prometheus.yml
-
   jaeger:
     image: jaegertracing/all-in-one:latest
     platform: linux/x86_64
     ports:
+      - '4317:4317'
+      - '4318:4318'
+      - '6831:6831/udp'
       - '14250:14250'
+      - '14267:14267'
       - '14268:14268'
       - '14269:14269'
-      - '4318:4318'
-      - '4317:4317'
-      - '6831:6831/udp'
-      - '16686:16686'
       - '16685:16685'
-      - '9411:9411'
+      - '16686:16686'
+      - '16687:16687'
     volumes:
       - './jaeger-ui.json:/etc/jaeger/jaeger-ui.json'
     command: --query.ui-config /etc/jaeger/jaeger-ui.json
     environment:
-#      - METRICS_STORAGE_TYPE=prometheus
-#      - PROMETHEUS_SERVER_URL=http://172.17.0.1:9090
-      - COLLECTOR_ZIPKIN_HOST_PORT=:9411
       - COLLECTOR_OTLP_ENABLED=true
       - JAEGER_DISABLED=true
     extra_hosts:
@@ -72,8 +61,6 @@ services:
       influxdb:
         condition: service_started
       grafana:
-        condition: service_started
-      prometheus:
         condition: service_started
     platform: linux/x86_64
     ports:

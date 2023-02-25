@@ -3,13 +3,12 @@ import { Resource } from '@opentelemetry/resources';
 import * as opentelemetry from '@opentelemetry/sdk-node';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { v4 as uuidv4 } from 'uuid';
-import {diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'
+import {diag, DiagConsoleLogger, DiagLogLevel} from '@opentelemetry/api'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import {  } from '@opentelemetry/sdk-trace-node';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { ExpressInstrumentation } from 'opentelemetry-instrumentation-express/dist/src';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
 import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 
 diag.setLogger(
   new DiagConsoleLogger(),
@@ -19,7 +18,6 @@ diag.setLogger(
 const exporter = new JaegerExporter({
   endpoint: "http://172.17.0.1:14268/api/traces",
 });
-const prometheusExporter = new PrometheusExporter({endpoint: 'http://172.17.0.1:9090'});
 
 const OTEL_SERVICE_RESOURCE = new Resource({
   [SemanticResourceAttributes.SERVICE_NAME]: 'super-api',
@@ -30,9 +28,8 @@ const OTEL_SERVICE_RESOURCE = new Resource({
 const expressInstrumentation = new ExpressInstrumentation();
 
 const sdk = new opentelemetry.NodeSDK({
-  instrumentations: [getNodeAutoInstrumentations(), new HttpInstrumentation(), expressInstrumentation,],
+  instrumentations: [getNodeAutoInstrumentations(), new HttpInstrumentation(), expressInstrumentation],
   resource: OTEL_SERVICE_RESOURCE,
-  metricReader: prometheusExporter,
 })
 sdk.configureTracerProvider({}, new SimpleSpanProcessor(exporter))
 sdk.start()

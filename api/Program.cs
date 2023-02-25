@@ -1,6 +1,8 @@
-using api;
 using api.Context;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,9 +11,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers();
-
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(b => b.AddService(serviceName: "API"))
+    .WithTracing(b => b.AddSource("API")
+        .AddAspNetCoreInstrumentation()
+        .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
+        .AddJaegerExporter())
+    .WithMetrics(b => b.AddMeter("API").AddRuntimeInstrumentation().AddAspNetCoreInstrumentation().AddPrometheusExporter())
+    ;
 var app = builder.Build();
-
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
@@ -27,4 +35,5 @@ if (app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.MapControllers();
+app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.Run();

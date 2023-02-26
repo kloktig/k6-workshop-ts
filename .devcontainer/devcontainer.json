@@ -20,5 +20,6 @@
   // "postCreateCommand": "",
   "remoteEnv": {
     "JAEGERHOST": "jaeger",
+    "DBHOST": "db"
   }
 }

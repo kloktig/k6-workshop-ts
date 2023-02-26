@@ -8,3 +8,8 @@ public class TodoItem
     public int Id { get; set; }
     public string ToDoTask { get; set; }
 }
+
+public class TodoItemDto
+{
+    public string ToDoTask { get; set; }
+}

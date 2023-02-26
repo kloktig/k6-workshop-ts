@@ -1,4 +1,3 @@
-using System.Data.Entity;
 using api.Context;
 using api.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -25,9 +24,9 @@ public class TodoController : ControllerBase
     }
     
     [HttpPost("/todo")]
-    public List<TodoItem> PostList([FromBody] TodoItem todoItem)
+    public List<TodoItem> PostList([FromBody] TodoItemDto todoItem)
     {
-        _db.TodoItems.Add(todoItem);
+        _db.TodoItems.Add(new TodoItem {ToDoTask = todoItem.ToDoTask});
         _db.SaveChanges();
         return _db.TodoItems.ToList();
     }   

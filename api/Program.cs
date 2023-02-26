@@ -10,11 +10,12 @@ const string serviceName = "klotig.API";
 const string serviceVersion = "1.0.0";
 
 var jaegerHost = Environment.GetEnvironmentVariable("JAEGERHOST") ?? "localhost";
+var dbHost = Environment.GetEnvironmentVariable("DBHOST") ?? "localhost";
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString(dbHost)));
 builder.Services.AddControllers();
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(b => b.AddService(serviceName: serviceName, serviceVersion: serviceVersion, serviceInstanceId: Environment.MachineName))

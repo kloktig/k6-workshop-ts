@@ -22,10 +22,10 @@ builder.Services.AddOpenTelemetry()
         .AddJaegerExporter())
     .WithMetrics(b => b
         .AddMeter(serviceName)
-        //.AddConsoleExporter()
-        .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddProcessInstrumentation()
         .AddPrometheusExporter())
     ;
 var app = builder.Build();

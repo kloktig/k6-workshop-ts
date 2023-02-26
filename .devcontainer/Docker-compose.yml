@@ -8,8 +8,8 @@ services:
       - '8086:8086'
     environment:
       - INFLUXDB_DB=k6
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
 
   grafana:
     image: grafana/grafana:latest
@@ -23,8 +23,8 @@ services:
       - ./dashboards:/var/lib/grafana/dashboards
       - ./grafana-dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yaml
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yaml
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
 
   prometheus:
     image: prom/prometheus:latest
@@ -33,8 +33,8 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -50,8 +50,8 @@ services:
       - METRICS_STORAGE_TYPE=prometheus
       - COLLECTOR_OTLP_ENABLED=true
       - JAEGER_DISABLED=true
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
 
   db:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
@@ -61,8 +61,8 @@ services:
     environment:
         SA_PASSWORD: "S3cur3P@ssW0rd!"
         ACCEPT_EULA: "Y"
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
       
   webapi:
     restart: always
@@ -86,8 +86,11 @@ services:
       - K6_OUT=influxdb=http://influxdb:8086/k6
     volumes:
       - ../:/workspace:cached
-    extra_hosts:
-      - 'host.docker.internal:host-gateway'
+    networks:
+      - backend
 
 volumes:
   prometheus-data:
+
+networks:
+  backend:

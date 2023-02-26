@@ -26,8 +26,8 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "init",
-            "command": "dotnet restore api && dotnet ef database update --project api",
+            "label": "init DB",
+            "command": "dotnet ef database update --project api",
             "type": "shell",
             "group": "build",
             "problemMatcher": "$msCompile"

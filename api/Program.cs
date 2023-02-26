@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 const string serviceName = "klotig.API";
 const string serviceVersion = "1.0.0";
 
+var jaegerHost = Environment.GetEnvironmentVariable("JAEGERHOST") ?? "localhost";
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoContext>(options =>
@@ -19,7 +21,7 @@ builder.Services.AddOpenTelemetry()
     .WithTracing(b => b.AddSource(serviceName)
         .AddAspNetCoreInstrumentation()
         .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
-        .AddJaegerExporter(o => o.AgentHost = "jaeger"))
+        .AddJaegerExporter(o => o.AgentHost = jaegerHost))
     .WithMetrics(b => b
         .AddMeter(serviceName)
         .AddAspNetCoreInstrumentation()

@@ -15,11 +15,11 @@ builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers();
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(b => b.AddService(serviceName: serviceName, serviceVersion: serviceVersion,serviceInstanceId: Environment.MachineName))
+    .ConfigureResource(b => b.AddService(serviceName: serviceName, serviceVersion: serviceVersion, serviceInstanceId: Environment.MachineName))
     .WithTracing(b => b.AddSource(serviceName)
         .AddAspNetCoreInstrumentation()
         .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
-        .AddJaegerExporter())
+        .AddJaegerExporter(o => o.AgentHost = "jaeger"))
     .WithMetrics(b => b
         .AddMeter(serviceName)
         .AddAspNetCoreInstrumentation()

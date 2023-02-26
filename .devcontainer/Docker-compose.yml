@@ -13,7 +13,6 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-
     ports:
       - '3000:3000'
     environment:
@@ -52,7 +51,7 @@ services:
       - '16686:16686'
       - '16687:16687'
     environment:
-      - PROMETHEUS_SERVER_URL=http://host.docker.internal:9090
+      - PROMETHEUS_SERVER_URL=http://prometheus:9090
       - METRICS_STORAGE_TYPE=prometheus
       - COLLECTOR_OTLP_ENABLED=true
       - JAEGER_DISABLED=true
@@ -89,10 +88,9 @@ services:
       - '1234:1234'
     command: /bin/sh -c "while sleep 1000; do :; done"
     environment:
-      - K6_OUT=influxdb=http://172.17.0.1:8086/k6
+      - K6_OUT=influxdb=http://influxdb:8086/k6
     volumes:
       - ../:/workspace:cached
-      - ../node_modules:/workspace/node_modules
     extra_hosts:
       - 'host.docker.internal:host-gateway'
 

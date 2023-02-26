@@ -1,12 +1,11 @@
 import http from "k6/http";
-import { sleep } from "k6";
 
 export const options = {
-  vus: 10,
-  iterations: 10,
+  vus: 100,
+  iterations: 10000,
 };
 
 export default function () {
-  http.get("https://test.k6.io");
-  sleep(1);
+  http.get("http://localhost:5065/todo");
+  http.get("http://localhost:5065/todoError");
 }

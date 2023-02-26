@@ -6,4 +6,4 @@ scrape_configs:
   - job_name: aggregated-trace-metrics
     static_configs:
     - targets: 
-      - 172.17.0.1:5065
+      - host.docker.internal:5065

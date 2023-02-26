@@ -32,9 +32,10 @@ services:
     ports:
       - '9090:9090'
     volumes:
-      - ./prometheus.yml:/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
-    command: --web.enable-lifecycle --config.file=/prometheus.yml
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
 
   jaeger:
     image: jaegertracing/all-in-one:latest
@@ -51,7 +52,7 @@ services:
       - '16686:16686'
       - '16687:16687'
     environment:
-      - PROMETHEUS_SERVER_URL=http://172.17.0.1:9090
+      - PROMETHEUS_SERVER_URL=http://host.docker.internal:9090
       - METRICS_STORAGE_TYPE=prometheus
       - COLLECTOR_OTLP_ENABLED=true
       - JAEGER_DISABLED=true

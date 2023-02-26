@@ -6,18 +6,27 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
+const string serviceName = "klotig.API";
+const string serviceVersion = "1.0.0";
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TodoContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddControllers();
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(b => b.AddService(serviceName: "API"))
-    .WithTracing(b => b.AddSource("API")
+    .ConfigureResource(b => b.AddService(serviceName: serviceName, serviceVersion: serviceVersion,serviceInstanceId: Environment.MachineName))
+    .WithTracing(b => b.AddSource(serviceName)
         .AddAspNetCoreInstrumentation()
         .AddSqlClientInstrumentation(options => options.SetDbStatementForText = true)
         .AddJaegerExporter())
-    .WithMetrics(b => b.AddMeter("API").AddRuntimeInstrumentation().AddAspNetCoreInstrumentation().AddPrometheusExporter())
+    .WithMetrics(b => b
+        .AddMeter(serviceName)
+        //.AddConsoleExporter()
+        .AddRuntimeInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddPrometheusExporter())
     ;
 var app = builder.Build();
 app.UseSwagger();

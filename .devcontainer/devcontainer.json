@@ -17,5 +17,5 @@
   "workspaceFolder": "/workspace/",
   "forwardPorts": [],
   // Uncomment the next line if you want start specific services in your Docker Compose config.
-  "postCreateCommand": "dotnet restore api && dotnet ef database update --project api",
+  // "postCreateCommand": "",
 }

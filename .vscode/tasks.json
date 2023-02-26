@@ -14,18 +14,6 @@
             "problemMatcher": "$msCompile"
         },
         {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/api/api.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
             "label": "watch",
             "command": "dotnet",
             "type": "process",
@@ -36,6 +24,32 @@
                 "${workspaceFolder}/api/api.csproj"
             ],
             "problemMatcher": "$msCompile"
-        }
+        },
+        {
+            "label": "init",
+            "command": "dotnet restore api && dotnet ef database update --project api",
+            "type": "shell",
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "npm run dev",
+            "command": "npm run dev",
+            "type": "shell",
+            "group": "build",
+            "problemMatcher": "$msCompile",
+            "options": {
+                "cwd": "${workspaceFolder}/k6"
+            },
+        },
+        {
+            "label": "k6 intro",
+            "command": "k6 run dist/intro.js",
+            "type": "shell",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/k6"
+            },
+        },
     ]
 }

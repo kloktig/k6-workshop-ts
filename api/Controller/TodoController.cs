@@ -9,15 +9,18 @@ namespace api.Controller;
 public class TodoController : ControllerBase
 {
     private readonly TodoContext _db;
+    private readonly ILogger<TodoController> _logger;
 
-    public TodoController(TodoContext todoContext)
+    public TodoController(TodoContext todoContext, ILogger<TodoController> logger)
     {
         _db = todoContext;
+        _logger = logger;
     }
     
     [HttpGet("/todo")]
     public List<TodoItem> GetList()
     {
+        _logger.LogInformation("Getting list");
         return _db.TodoItems.ToList();
     }
     
